@@ -1,0 +1,295 @@
+# 追随 J 神学生信之一
+
+## 1.R爬取生信软件到思维导图列表
+
+#### 1.安装R
+
+下载R语言的软件: <https://cran.r-project.org/bin/macosx/R-3.5.1.pkg>
+
+下载Rstudio编辑器:<https://www.rstudio.com/products/rstudio/download/>
+
+#### 2.了解html网页的源代码DOM结构
+
+HTML DOM教程：http://www.w3school.com.cn/html5/html_5_canvas.asp
+
+谷歌浏览器右键查看源代码
+
+#### 3.爬取数据
+
+目标网站:<https://omictools.com/single-cell-rna-seq-category>
+
+（注：用谷歌浏览器打开才能查看源代码，Safari不能）
+
+![](/Users/mengmeng/Desktop/scRNAseq.png)
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午2.02.38.png)
+
+**每一个渲染后的源代码和网页上显示出来的一一对应，如下图**
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午3.06.21.png)
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午3.06.45.png)
+
+**1）了解认识R及如何系统入门R语言<https://cloud.tencent.com/developer/article/1054642>**
+
+
+
+**2）安装rvest包**
+
+ 在Packages处输入rvest包，进行安装，安装好后会在packages处显示出来;或者在代码撰写区键入
+
+```R
+install.packages('xxxx')
+```
+
+   
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午3.29.12.png)
+
+若批量安装R包，代码如下：
+
+```R
+list.of.packages <- c("xx", "yy") # replace xx and yy with package names
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+lapply(new.packages, require, character.only=T)
+```
+
+
+
+**3)在代码撰写区（Source）中输入代码**
+
+
+
+```R
+library(rvest)
+url='https://omictools.com/single-cell-rna-seq-category'
+fit<-try(web <- read_html(url),silent=TRUE)
+if(F){
+    save(web,url,file='omictools_scRNA_2018.10.31.Rdata'
+    rm(list=ls)
+        load(file='omictools_scRNA_2018.10.31.Rdata'))
+}
+if('try-error' %in% class(fit)){
+    cat('HTTP error 404\n')
+}else{
+    h2<- web %>% html_nodes('h2')%>% html_text()
+    h3<- web %>% html_nodes('h3')%>% html_text()
+}
+library(stringr)
+h2=trimws(h2)
+h3=trimws(h3)
+```
+
+在代码执行区(**Console**)显示如下：
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午4.13.59.png)
+
+
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午4.16.38.png)
+
+**4）最后以txt格式输出：**
+
+```R
+write.table(h2,'h2.txt',row.names=F,col.names=F,quote=F)
+getwd()
+```
+
+可以看到h2.txt和h3.txt分别在Files中显示
+
+![](/Users/mengmeng/Downloads/C2D37817-E293-49E6-AFCD-2D557415284B.png)
+
+**点开，可见在代码撰写区显示**
+
+
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午4.36.53.png)
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午4.37.11.png)
+
+
+
+### ***用幕布展现出思维导图如下图***
+
+
+
+![](/Users/mengmeng/Downloads/图片/单细胞转录组数据分析软件.png)
+
+
+
+## 2.Mac终端连接服务器
+
+#### 1.Mac终端登陆服务器
+
+![登陆服务器](/Users/mengmeng/Downloads/图片/终端登陆服务器.png)
+
+#### 2.ls相关命令
+
+1. ls -a 列出文件下所有的文件，包括以“.“开头的隐藏文件（linux下文件隐藏文件是以.开头的，如果存在..代表存在着父目录）
+
+2. ls -I 列出文件的详细信息，如创建者，创建时间，文件的读写权限列表等等
+
+3. ls -F 在每一个文件的末尾加上一个字符说明该文件的类型。"@"表示符号链接、"|"表示FIFOS、"/"表示目录、"="表示套接字
+
+4. ls -s 在每个文件的后面打印出文件的大小
+
+5. ls -t 按时间进行文件的排序  Time(时间)
+
+6. ls -A 列出除了"."和".."以外的文件
+
+7. ls -R 将目录下所有的子目录的文件都列出来，相当于我们编程中的“递归”实现
+
+8. ls -L 列出文件的链接名
+
+9. ls -S 以文件的大小进行排序
+
+   简单练习一下
+
+   ![](/Users/mengmeng/Downloads/图片/显示文件.png)
+
+
+
+## 3.初涉IGV
+
+### 基础概念
+
+它是一款本地的探索基因组数据的可视化浏览器，有多个系统版本，支持多种不同类型的输入格式，包括芯片测序、二代测序、基因组注释文件等。推荐使用BAM与SAM格式，主要格式见下表:
+
+| 数据来源                               | 文件格式      |
+| -------------------------------------- | ------------- |
+| 序列比对                               | SAM/BAM       |
+| 显示覆盖率                             | TDF           |
+| 拷贝数                                 | SNP、CN       |
+| 基因表达                               | GCT、RES      |
+| 基因注释                               | GFF3/GTF、BED |
+| 突变数据                               | MUT           |
+| 追踪参考基因组覆盖度、测序深度（UCSC） | WIG、BW       |
+
+生物信息学常见的数据格式：基因组fasta、测序数据fasta、基因组不同软件构建的索引文件index、fastq、sam、bam、bed、gtf、gff、vcf、bigwig、wiggle。相关介绍见如下网页：
+
+​         1.https://wiki.bits.vib.be/index.php/Category:Formats
+
+​         2.http://www.bio-info-trainee.com/1815.html
+
+​          (UCSC规定的这几个文件格式(wig、bigWig和bedgraph)
+
+​         3.https://www.jianshu.com/p/57b5b4b20dc6
+
+**###要提前做好的准备###**：
+
+IGV官网下载:<http://software.broadinstitute.org/software/igv/download>选择对应的mac版本即可
+
+Java version 8下载: https://www.java.com/en/download/mac_download.jsp
+
+IGV内置的物种基因组及基因组数据：http://software.broadinstitute.org/software/igv/Genomes
+
+IGV官方帮助文档：http://software.broadinstitute.org/software/igv/book/export/html/6
+
+IGV相关帮助文:1.https://cloud.tencent.com/developer/article/1050826
+
+​                          2.https://www.jianshu.com/p/1b9426d0f9f4
+
+​                          3.https://www.jianshu.com/p/e5338858dd82?from=singlemessage
+
+IGV资料大全：[https://share.weiyun.com/5oAvoqZ][https://share.weiyun.com/5oAvoqZ](Jimmy微云分享)生信qq群：https://mp.weixin.qq.com/s?src=3&timestamp=1541046299&ver=1&signature=JI8OovVeX1L5oV1PKRDYecbSf8uI6nsb38wWLlOPSaZIlC2AkZJjKfdEqvBy7U8dqWxD4ZVne5x5xKbkreI89lOKPBid6U3YpbQatepUSONdbFWJzFjsx7-yUFuueh4fWsKvtAxcg8GL*kKuFaCu*a2Y6Ger-fRbeyOssazLWB0=
+
+
+
+## ![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午5.39.00.png)
+
+### 在UCSU上找到文件—chromFa.tar.gz
+
+其网址为http://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz
+
+**1)在终端中输入：**
+
+```R
+wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz 下载文件
+```
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午5.49.45.png)
+
+**2)解压文件**
+
+```R
+tar -zxvf chromFa.tar.gz 解压文件
+```
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午5.56.37.png)
+
+​                          
+
+**3）解压后，写入文件**
+
+```
+cat *.fa > hg19.fa 写入文件
+```
+
+
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午6.01.15.png)
+
+**4)删除其他无用的文件**
+
+```
+rm chr*.fa 
+```
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午6.03.14.png)
+
+
+
+**5）显示其路径**
+
+```R
+pwd
+```
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午6.12.34.png)
+
+
+
+
+
+**IGV页面**
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-02 上午6.18.48.png)
+
+
+
+
+
+### 未完待续...
+
+(下次会记得终端换黑色背景😊...)
+
+
+
+### ***学习过程中搜索到的相关网站***
+
+R语言初级教程(02): RStudio的法：<https://blog.csdn.net/weixin_42261607/article/details/82846528>
+
+【生信学习周】如何系统入门R语言<https://mp.weixin.qq.com/s?src=11&timestamp=1541101609&ver=1218&signature=k99IbK8CUQD4fsXgX1JGrgMGC7TBX-Y6Db5eAj43JsVfCVmlO-fhKLfL8EOxfYlggf34vFOY*HZPMffKaqbeVTJaymKwr9qq3CT*XSVN5risjQNf-ITW0w93t6yXOfWf&new=1>
+
+R语言数据的导入与导出:https://www.cnblogs.com/awishfullyway/p/6485209.html
+
+将爬取的信息保存到本地:https://blog.csdn.net/weixin_37636702/article/details/78757075
+
+Mac终端使用技巧 切换到其他路径和目录:https://blog.csdn.net/robinson_911/article/details/53054104
+
+mac终端上传文件到远程服务器：https://blog.csdn.net/u010988549/article/details/46899663
+
+Mac 终端下载文件:https://blog.csdn.net/qq_34385263/article/details/79483026
+
+R语言学习：使用rvest包抓取网页数据：https://www.jianshu.com/p/f768cbf5ee0c
+
+从零开始完整学习全基因组测序（WGS）数据分析:https://www.plob.org/article/11652.html
+
+ls命令大全：<https://blog.csdn.net/u014082714/article/details/43857003>
+
+pwd命令大全：<https://blog.csdn.net/u014082714/article/details/43856893>
+
+下载注释文件：https://www.gencodegenes.org
+
+![](/Users/mengmeng/Desktop/屏幕快照 2018-11-03 上午10.57.41.png)
