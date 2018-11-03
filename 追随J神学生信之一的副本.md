@@ -292,4 +292,4 @@ pwd命令大全：<https://blog.csdn.net/u014082714/article/details/43856893>
 
 下载注释文件：https://www.gencodegenes.org
 
-![](/Users/mengmeng/Desktop/屏幕快照 2018-11-03 上午10.57.41.png)
+![屏幕快照 2018-11-03 上午10.57.41](/Users/mengmeng/Desktop/屏幕快照 2018-11-03 上午10.57.41.png)
